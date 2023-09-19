@@ -14,17 +14,27 @@ export class CategoryService {
         message: `Verifique os campos necessários`,
       };
     }
+
     await this.prisma.categories.create({
       data: {
         name: categoryDto.name,
         description: categoryDto.description,
       },
     });
+
     return {
       success: true,
       statusCode: 200,
       message: `Categoria adicionada com sucesso`,
     };
+  }
+
+  async findAll(): Promise<any> {
+    try {
+      return await this.prisma.categories.findMany();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async findOne(id: string): Promise<any> {
