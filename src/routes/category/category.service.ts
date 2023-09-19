@@ -6,7 +6,7 @@ import { CategoryDto } from 'src/interfaces/dtos/category.dto';
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async CreateCategory(categoryDto: CategoryDto): Promise<any> {
+  async createCategory(categoryDto: CategoryDto): Promise<any> {
     if (!categoryDto) {
       return {
         success: false,
@@ -25,5 +25,15 @@ export class CategoryService {
       statusCode: 200,
       message: `Categoria adicionada com sucesso`,
     };
+  }
+
+  async findOne(id: string): Promise<any> {
+    try {
+      return await this.prisma.categories.findUnique({
+        where: { category_id: Number(id) },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
