@@ -1,15 +1,33 @@
-import { CategoryModule } from './routes/category/category.module';
-import { CategoryService } from './routes/category/category.service';
-import { CategoryController } from './routes/category/category.controller';
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AuthService } from './auth/auth.service';
+import { AuthController } from './auth/auth.controller';
+import { CategoryController } from './modules/category/category.controller';
+import { CategoryService } from './modules/category/category.service';
+import { CategoryModule } from './modules/category/category.module';
 import { PrismaService } from './database/prisma.service';
-import { UsersModule } from './users/users.module';
+import { AppController } from './app.controller';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './modules/users/users.module';
+import { AppService } from './app.service';
+import { Module } from '@nestjs/common';
+import { GoogleStrategy } from './auth/google.strategy';
 
 @Module({
-  controllers: [CategoryController, AppController],
-  providers: [CategoryService, AppService, PrismaService],
-  imports: [CategoryModule, AppModule, UsersModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    CategoryModule,
+    AppModule,
+    UsersModule,
+  ],
+  controllers: [AuthController, CategoryController, AppController],
+  providers: [
+    AuthService,
+    CategoryService,
+    AppService,
+    PrismaService,
+    GoogleStrategy,
+  ],
 })
 export class AppModule {}
