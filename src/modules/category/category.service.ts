@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
-import { CategoryDto } from 'src/interfaces/dtos/category.dto';
+import { CategoryDto } from './dto/category.dto';
+import { CustomHttpException } from 'src/exceptions/custom-http-exception';
 
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async createCategory(categoryDto: CategoryDto): Promise<any> {
-    if (!categoryDto) {
-      return {
-        success: false,
-        statusCode: 400,
-        message: `Verifique os campos necessários`,
-      };
-    }
+  async createCategory(categoryDto: CategoryDto) {
+    if (!categoryDto)
+      throw new CustomHttpException(
+        false,
+        400,
+        'Verifique os campos necessários',
+      );
 
     await this.prisma.categories.create({
       data: {
@@ -21,29 +21,15 @@ export class CategoryService {
         description: categoryDto.description,
       },
     });
-
-    return {
-      success: true,
-      statusCode: 200,
-      message: `Categoria adicionada com sucesso`,
-    };
   }
 
-  async findAll(): Promise<any> {
-    try {
-      return await this.prisma.categories.findMany();
-    } catch (error) {
-      console.log(error);
-    }
+  async findAll() {
+    return await this.prisma.categories.findMany();
   }
 
-  async findOne(id: string): Promise<any> {
-    try {
-      return await this.prisma.categories.findUnique({
-        where: { category_id: Number(id) },
-      });
-    } catch (error) {
-      console.log(error);
-    }
+  async findOne(id: string) {
+    return await this.prisma.categories.findUnique({
+      where: { category_id: Number(id) },
+    });
   }
 }
